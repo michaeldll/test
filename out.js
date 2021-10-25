@@ -35014,6 +35014,7 @@
       backgroundMesh.setInitialColor(primaryColor);
       backgroundMesh.setFinalColor(primaryColor);
       params2.backgroundProgressionTarget = primaryColor;
+      console.log(primaryColor);
       const borderMat = new MeshBasicMaterial({
         map: textureLoader2.load("https://uploads-ssl.webflow.com/609955ba45fec848355ed2d6/6176547b5b9a2b29e71e8dca_Rectangle%2034(1).png"),
         transparent: true
@@ -35250,6 +35251,7 @@
         if (prevValue !== value) {
           state.prevActiveProjectIndex = prevValue;
           params2.backgroundProgressionTarget = projects2[value].data.primaryColor;
+          console.log(projects2[value].data.primaryColor);
           if (value > prevValue) {
             animateOutToRight(prevValue);
             animateIn(value);
@@ -35468,28 +35470,13 @@
       },
       text: {
         title: {
-          split: new SplitText(titleEl, { type: "chars", charsClass: "hero-character" }),
-          timeline: {
-            left: gsapWithCSS.timeline({ paused: true }),
-            right: gsapWithCSS.timeline({ paused: true }),
-            top: gsapWithCSS.timeline({ paused: true })
-          }
+          split: new SplitText(titleEl, { type: "chars", charsClass: "hero-character" })
         },
         category: {
-          split: new SplitText(categoryEl, { type: "chars", charsClass: "hero-character" }),
-          timeline: {
-            left: gsapWithCSS.timeline({ paused: true }),
-            right: gsapWithCSS.timeline({ paused: true }),
-            top: gsapWithCSS.timeline({ paused: true })
-          }
+          split: new SplitText(categoryEl, { type: "chars", charsClass: "hero-character" })
         },
         client: {
-          split: new SplitText(clientEl, { type: "chars", charsClass: "hero-character" }),
-          timeline: {
-            left: gsapWithCSS.timeline({ paused: true }),
-            right: gsapWithCSS.timeline({ paused: true }),
-            top: gsapWithCSS.timeline({ paused: true })
-          }
+          split: new SplitText(clientEl, { type: "chars", charsClass: "hero-character" })
         }
       },
       container
@@ -35501,9 +35488,7 @@
   var mouseEl = document.querySelector(".mouse");
   var mouse = new MouseController(mouseCanvasEl, mouseEl);
   ready(() => {
-    const app = document.getElementById("app");
-    app.style.display = "block";
-    app.style.opacity = "1";
+    gsapWithCSS.to(document.getElementById("loader"), { opacity: 0 });
     slider.init();
     mouse.init();
   });
