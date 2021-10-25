@@ -35234,7 +35234,7 @@
 		  if (prevValue === "PRELOAD" && value === "INTRO") {
 			setTimeout(() => {
 			  state.phase = "IDLE";
-			}, 1500);
+			}, 1);
 		  }
 		  if (value === "SLIDING" || value === "IDLE") {
 			for (const projectMesh of projectMeshes) {
@@ -35275,11 +35275,8 @@
 	  function updateStateManager() {
 		switch (state.phase) {
 		  case "PRELOAD":
-			projectMeshes[1].introTransition(PLANE_PARAMS[1], 0, viewport);
 			break;
 		  case "INTRO":
-			params2.progression = lerp(params2.progression, 1, 0.1);
-			projectMeshes[1].introTransition(projectMeshes[1], params2.progression, viewport);
 			break;
 		  case "IDLE":
 			{
@@ -35510,6 +35507,9 @@
 	var mouseEl = document.querySelector(".mouse");
 	var mouse = new MouseController(mouseCanvasEl, mouseEl);
 	ready(() => {
+	  const app = document.getElementById("app");
+	  app.style.display = "block";
+	  app.style.opacity = "1";
 	  slider.init();
 	  mouse.init();
 	});
