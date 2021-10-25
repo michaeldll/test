@@ -35010,11 +35010,11 @@
       backgroundMesh.frustumCulled = false;
       backgroundMesh.name = "Background";
       scene.add(backgroundMesh);
-      const { primaryColor } = projects2[state.activeProjectIndex].data;
+      const { primaryColor, secondaryColor } = projects2[state.activeProjectIndex].data;
       backgroundMesh.setInitialColor(primaryColor);
       backgroundMesh.setFinalColor(primaryColor);
-      params2.backgroundProgressionTarget = primaryColor;
-      console.log(primaryColor);
+      params2.backgroundProgressionTarget = secondaryColor;
+      console.log(primaryColor.getHex());
       const borderMat = new MeshBasicMaterial({
         map: textureLoader2.load("https://uploads-ssl.webflow.com/609955ba45fec848355ed2d6/6176547b5b9a2b29e71e8dca_Rectangle%2034(1).png"),
         transparent: true
@@ -35250,8 +35250,8 @@
       state.onChange("activeProjectIndex", (value, prevValue) => {
         if (prevValue !== value) {
           state.prevActiveProjectIndex = prevValue;
-          params2.backgroundProgressionTarget = projects2[value].data.primaryColor;
-          console.log(projects2[value].data.primaryColor);
+          params2.backgroundProgressionTarget = projects2[value].data.secondaryColor;
+          console.log(projects2[value].data.primaryColor.getHex());
           if (value > prevValue) {
             animateOutToRight(prevValue);
             animateIn(value);
