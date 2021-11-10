@@ -35108,6 +35108,10 @@
       images.forEach((el) => {
         el.style.display = "none";
       });
+      const div = document.createElement("DIV");
+      div.className = "debug-color";
+      div.innerHTML = "<div></div><div></div>";
+      document.querySelector(".nav-item.left").appendChild(div);
       debugColors(projects2[state.activeProjectIndex]);
       setDOMColors(state.activeProjectIndex);
     }
