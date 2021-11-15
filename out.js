@@ -35411,6 +35411,7 @@
             projectMesh.state.hovered = false;
         }
       }
+      updateOOB();
       updateTweaks();
     }
     function initIntro(videoElement) {
