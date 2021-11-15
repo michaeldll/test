@@ -35036,6 +35036,10 @@
       for (const element of navLinks.concat(miscTexts).concat(charsToChange)) {
         element.style.color = color;
       }
+      const navLines = [...document.querySelectorAll(".nav-line")];
+      for (const line of navLines) {
+        line.style.backgroundColor = color;
+      }
       const svgLogos = [...document.querySelectorAll(".mono-logo svg, .logomark-wrapper svg")];
       for (const logo of svgLogos) {
         const paths = [...logo.querySelectorAll("path")];
