@@ -35028,8 +35028,11 @@
     }
     ;
     function setDOMColors(index) {
-      const { data, text } = projects2[index];
-      const color = data.primaryColor.getStyle();
+      const { data, text, container } = projects2[index];
+      const el = container.querySelector(".foreground");
+      if (!el)
+        return;
+      const color = el.style.color;
       const navLinks = [...document.querySelectorAll(".nav-link .nav-text")];
       const miscTexts = [...document.querySelectorAll(".client, .hero-block.right .text")];
       const charsToChange = text.title.split.chars.concat(text.category.split.chars).concat(text.client.split.chars);
@@ -35312,8 +35315,8 @@
             animateOutToLeft(prevValue, PARAMS.animationDuration);
             animateIn(value, PARAMS.animationDuration);
           }
+          console.log(projects2[value].data.title);
           setDOMColors(value);
-          debugColors(projects2[value]);
         }
         for (let index = 0; index < projectMeshes.length; index++) {
           const projectMesh = projectMeshes[index];
