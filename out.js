@@ -34583,26 +34583,6 @@
     uniform float uBorderCenter;
     varying vec2 vUv;
 
-    // float roundBox( vec3 position, vec3 box, float radius )
-    // {
-    //     return length(max(abs(position)-box,0.0))-radius;
-    // }
-
-    //---------------------------------------------------------
-    // draw rectangle frame with rounded edges
-    //---------------------------------------------------------
-    // float roundedFrame (vec2 pos, vec2 size, float radius, float thickness)
-    // {
-    //     float d = length(max(abs(vUv - pos),size) - size) - radius;
-    //     return smoothstep(0.55, 0.45, abs(d / thickness) * 5.0);
-    // }
-
-    // // from http://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm
-    // float udRoundBox( vec2 p, vec2 b, float r )
-    // {
-    //     return length(max(abs(p)-b+r,0.0))-r;
-    // }
-
     vec3 adjustExposure(vec3 color, float value) {
         return (1.0 + value) * color;
     }
@@ -34645,7 +34625,7 @@
 
     void main() {
         // Scale UVs
-        vec2 scaledUv = vec2(vUv.x, scale(vUv, uUvFactor.x).y);
+        vec2 scaledUv = vec2(scale(vUv, uUvFactor.x).x, scale(vUv, uUvFactor.y).y);
 
         // Standardised coordinates with pixelRatio and ratio
         vec2 res = uResolution * uPixelRatio;
@@ -34664,7 +34644,7 @@
         vec4 texel = texture2D(uTexture, scaledUv);
 
         // vec3 circleExposureTexel = vec3(adjustExposure(texel.rgb, circleColor));
-        vec3 circleSaturationExposureTexel = adjustSaturation(texel.rgb, uSaturation);
+        vec3 saturationTexel = adjustSaturation(texel.rgb, uSaturation);
 
         // Each result will return 1.0 (white) or 0.0 (black).
         // float thresholdX = uStrokeSize;
@@ -34677,13 +34657,13 @@
         // The multiplication of left*bottom will be similar to the logical AND.
         // vec3 borderColor = vec3( left * bottom * right * top );
 
-        // circleSaturationExposureTexel *= borderColor;
+        // saturationTexel *= borderColor;
 
         // float dist = distance(scaledUv, vec2(0.5));
         // dist = step(dist, 0.69);
 
         float alpha = cursedRoundedEdges(vUv, uBorderRadius, uBorderCenter);
-        gl_FragColor = vec4(circleSaturationExposureTexel, texel.a * alpha );
+        gl_FragColor = vec4(saturationTexel, texel.a * alpha );
     }
 
         // vec2 halfUv = 0.5 * vUv.xy;
@@ -34720,7 +34700,7 @@
             value: 0.3
           },
           uUvFactor: {
-            value: new Vector2(1, 1)
+            value: params2.uvFactor
           },
           uStrokeSize: {
             value: 0.01
@@ -34825,31 +34805,7 @@
         }
       });
       this.state.onChange("hovered", (value, prevValue) => {
-        if (value) {
-          gsapWithCSS.to(this.scale, {
-            x: this.params.scale.x * 1.45,
-            ease: Cubic.easeOut,
-            duration: 2.1
-          });
-          gsapWithCSS.to(this.material.uniforms.uUvFactor.value, {
-            x: 1.45,
-            y: 1.45,
-            ease: Cubic.easeOut,
-            duration: 2.1
-          });
-        } else {
-          gsapWithCSS.to(this.scale, {
-            x: this.params.scale.x,
-            ease: Cubic.easeOut,
-            duration: 2.1
-          });
-          gsapWithCSS.to(this.material.uniforms.uUvFactor.value, {
-            x: 1,
-            y: 1,
-            ease: Cubic.easeOut,
-            duration: 2.1
-          });
-        }
+        console.log(this.params.uvFactor.x);
       });
     }
   };
@@ -34857,10 +34813,10 @@
 
   // src/classes/BackgroundPlane.ts
   var vertexShader2 = `
-    varying vec2 vUv;
+    // varying vec2 vUv;
 
     void main(){
-        vUv = uv;
+        // vUv = uv;
         gl_Position = vec4(position.xy, 0.0, 1.0);
     }
 `;
@@ -34875,7 +34831,7 @@
     // uniform float uNoiseFrequency;
     // uniform float uPixelRatio;
 
-    varying vec2 vUv;
+    // varying vec2 vUv;
 
     // float Noise21 (vec2 p, float ta, float tb) {
     //     return fract(sin(p.x*ta+p.y*tb)*5678.);
@@ -35012,7 +34968,8 @@
         borderRadius: 27e-4,
         borderStart: 0.025,
         borderEnd: 1 - 0.025,
-        borderCenter: 1.89
+        borderCenter: 1.89,
+        uvFactor: new Vector2(1.33, 1)
       };
       PLANE_PARAMS.push(parameters);
       const mesh = new ProjectMesh_default(context, geometries[0], projects2[index].data.texture, parameters, index);
@@ -35440,14 +35397,14 @@
       backgroundMesh.material.uniforms.uColorFinal.value.lerpColors(backgroundMesh.material.uniforms.uColorFinal.value, params2.backgroundProgressionTarget, 0.1);
       if (intersects2.length) {
         const { active, hasFinishedScaling } = intersects2[0].object.state;
-        if (active && hasFinishedScaling)
+        if (active && hasFinishedScaling && !intersects2[0].object.state.hovered)
           intersects2[0].object.state.hovered = true;
       } else {
         for (const projectMesh of projectMeshes) {
-          projectMesh.state.hovered = false;
+          if (projectMesh.state.hovered)
+            projectMesh.state.hovered = false;
         }
       }
-      updateOOB();
       updateTweaks();
     }
     function initIntro(videoElement) {
@@ -35532,7 +35489,6 @@
   var slider = sliderController(params, backgroundParams, projects, textureLoader);
   var mouseCanvasEl = document.createElement("CANVAS");
   mouseCanvasEl.className = "mouse-canvas";
-  var mouseEl = document.querySelector(".mouse");
   ready(() => {
     gsapWithCSS.to(document.getElementById("loader"), { opacity: 0 });
     slider.init();
