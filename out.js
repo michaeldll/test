@@ -35073,7 +35073,6 @@
       div.className = "debug-color";
       div.innerHTML = "<div></div><div></div>";
       document.querySelector(".nav-item.left").appendChild(div);
-      debugColors(projects2[state.activeProjectIndex]);
       setDOMColors(state.activeProjectIndex);
     }
     function getChars(index) {
