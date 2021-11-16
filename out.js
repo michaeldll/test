@@ -35083,7 +35083,7 @@
       const categoryChildren = projects2[index].text.category.split.chars.map((char) => char.querySelector(".hero-character-child"));
       return titleChildren.concat(categoryChildren);
     }
-    function getLinesClient(index) {
+    function getClient(index) {
       return projects2[index].text.client.split.lines;
     }
     function animateIn(index, duration = 1.8) {
@@ -35094,7 +35094,55 @@
         duration,
         ease: textEase.easeInOut
       });
-      gsapWithCSS.fromTo(getLinesClient(index), {
+      gsapWithCSS.fromTo(getClient(index), {
+        y: 20,
+        opacity: 0,
+        duration,
+        ease: textEase.easeInOut
+      }, {
+        y: 0,
+        opacity: 1,
+        duration,
+        ease: textEase.easeInOut
+      });
+    }
+    function animateInFromLeft(index, duration = 1.8) {
+      gsapWithCSS.fromTo(getChars(index), {
+        x: -60,
+        autoAlpha: 1,
+        duration,
+        ease: textEase.easeInOut
+      }, {
+        x: 0,
+        autoAlpha: 1,
+        duration,
+        ease: textEase.easeInOut
+      });
+      gsapWithCSS.fromTo(getClient(index), {
+        y: 20,
+        opacity: 0,
+        duration,
+        ease: textEase.easeInOut
+      }, {
+        y: 0,
+        opacity: 1,
+        duration,
+        ease: textEase.easeInOut
+      });
+    }
+    function animateInFromRight(index, duration = 1.8) {
+      gsapWithCSS.fromTo(getChars(index), {
+        x: 60,
+        autoAlpha: 1,
+        duration,
+        ease: textEase.easeInOut
+      }, {
+        x: 0,
+        autoAlpha: 1,
+        duration,
+        ease: textEase.easeInOut
+      });
+      gsapWithCSS.fromTo(getClient(index), {
         y: 20,
         opacity: 0,
         duration,
@@ -35121,7 +35169,7 @@
       });
     }
     function animateOutLineUp(index, duration = 1.8) {
-      gsapWithCSS.to(getLinesClient(index), {
+      gsapWithCSS.to(getClient(index), {
         y: -20,
         opacity: 0,
         duration,
@@ -35140,7 +35188,9 @@
       for (let index = state.activeProjectIndex + 1; index < projects2.length; index++) {
         animateOutToLeft(index, 0);
       }
-      animateIn(state.activeProjectIndex, PARAMS.animationDuration);
+      setTimeout(() => {
+        animateIn(state.activeProjectIndex, PARAMS.animationDuration);
+      }, 200);
     }
     function initTweaks() {
       {
@@ -35305,17 +35355,22 @@
       state.onChange("activeProjectIndex", (value, prevValue) => {
         if (prevValue !== value) {
           state.prevActiveProjectIndex = prevValue;
-          const { data, text } = projects2[value];
+          const { data } = projects2[value];
           params2.backgroundProgressionTarget = data.secondaryColor;
           animateOutLineUp(prevValue, PARAMS.animationDuration);
-          if (value > prevValue) {
+          if (prevValue === projects2.length - 1 && value === 0) {
             animateOutToRight(prevValue, PARAMS.animationDuration);
-            animateIn(value, PARAMS.animationDuration);
-          } else {
+            animateInFromLeft(value, PARAMS.animationDuration);
+          } else if (value === projects2.length - 1 && prevValue === 0) {
             animateOutToLeft(prevValue, PARAMS.animationDuration);
-            animateIn(value, PARAMS.animationDuration);
+            animateInFromRight(value, PARAMS.animationDuration);
+          } else if (value > prevValue) {
+            animateOutToRight(prevValue, PARAMS.animationDuration);
+            animateInFromLeft(value, PARAMS.animationDuration);
+          } else if (value < prevValue) {
+            animateOutToLeft(prevValue, PARAMS.animationDuration);
+            animateInFromRight(value, PARAMS.animationDuration);
           }
-          console.log(projects2[value].data.title);
           setDOMColors(value);
         }
         for (let index = 0; index < projectMeshes.length; index++) {
